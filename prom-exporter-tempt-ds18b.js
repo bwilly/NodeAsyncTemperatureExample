@@ -14,49 +14,37 @@ Tempt: 19.5
 const http = require('http')
 const url = require('url')
 const client = require('prom-client')
-const dht = require("node-dht-sensor").promises;
+const sensor_ds18b20 = require('ds18b20-raspi');
 
 // Create a Registry which registers the metrics
 const register = new client.Registry()
 
 // Add a default label which is added to all metrics
 register.setDefaultLabels({
-  app: 'example-nodejs-app'
+  app: 'sensor-temperature-app'
 })
 
-// Enable the collection of default metrics
-// client.collectDefaultMetrics({ register })
-
-// Create a histogram metric
-const httpRequestDurationMicroseconds = new client.Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'Duration of HTTP requests in microseconds',
-  labelNames: ['method', 'route', 'code'],
-  buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10]
-})
 
 // Register the histogram
 // register.registerMetric(httpRequestDurationMicroseconds)
 
 const temptMetric = new client.Gauge({
   name: 'ambient_tempt_celcius',
+  labelNames: ['location'],
   help: 'Temperature Sensor',
-  async collect() {
+  // async collect() {
+  collect() {
     // Invoked when the registry collects its metrics' values.
     // This can be synchronous or it can return a promise/be an async function.
     // this.set(7);
 
     try {
-      // await dht.read(22, 18, function (err, temperature, humidity) {
-      //   if (!err) {
-      //     console.log(`temp: ${temperature}°C, humidity: ${humidity}%`);
-      //     // return temperature.toFixed(2);
-      //   } else {
-      //     console.log(err);
-      //   }
-      let tempt = (await dht.read(22, 18)).temperature;
-      console.log("Tempt: " + tempt);
-      this.set(tempt);
+      let sensorResult = sensor_ds18b20.readSimpleC();
+
+
+      console.log("Tempt: " + sensorResult);
+      this.set({ location: 'Pi4-2' }, sensorResult);
+
 
 
 
@@ -73,8 +61,6 @@ register.registerMetric(temptMetric);
 
 // Define the HTTP server
 const server = http.createServer(async (req, res) => {
-  // Start the timer
-  const end = httpRequestDurationMicroseconds.startTimer()
 
   // Retrieve route from request object
   const route = url.parse(req.url).pathname
@@ -86,8 +72,6 @@ const server = http.createServer(async (req, res) => {
     // res.end("hello bwilly")
   }
 
-  // End timer and add labels
-  end({ route, code: res.statusCode, method: req.method })
 })
 
 // Start the HTTP server which exposes the metrics on http://localhost:8080/metrics

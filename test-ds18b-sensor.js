@@ -35,7 +35,7 @@ const sensor_ds18b20 = require('ds18b20-raspi');
 
 function readTempt() {
 
-    let sensorResult = sensor_ds18b20.readAllC();
+    let sensorResult = sensor_ds18b20.readSimpleC();
     const temperature = sensorResult;
 
 
