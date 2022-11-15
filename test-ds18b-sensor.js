@@ -35,7 +35,14 @@ const sensor_ds18b20 = require('ds18b20-raspi');
 
 function readTempt() {
 
-    let sensorResult = sensor_ds18b20.readSimpleC();
+    // this ok, but want to readc multiple, so commenting out
+    // let sensorResult = sensor_ds18b20.readSimpleC();
+    // const deviceId = '28-020a924654d7';
+    //const deviceId = '28-020e91770579'; // house test
+    //const deviceId = '28-000002d111e1'; // Engine Room Ambient 
+    const deviceId = '28-0000069813e8'; // Hot Water Heater
+    let sensorResult = sensor_ds18b20.readC(deviceId);
+
     const temperature = sensorResult;
 
 
