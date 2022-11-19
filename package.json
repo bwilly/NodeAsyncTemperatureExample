@@ -9,6 +9,7 @@
   "author": "bwilly",
   "license": "ISC",
   "dependencies": {
+    "commander": "^9.4.1",
     "ds18b20-raspi": "^0.3.6",
     "express": "^4.18.1",
     "helmet": "^6.0.0",

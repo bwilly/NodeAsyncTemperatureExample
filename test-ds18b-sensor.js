@@ -13,6 +13,11 @@ temp (inside asyc): 19.399999618530273°C, humidity: 52.099998474121094%
 // const dht = require("node-dht-sensor");
 
 const sensor_ds18b20 = require('ds18b20-raspi');
+const program = require('commander');
+
+program
+    .option('-s, --sensor <port>', '1-wire sensor id')
+    .parse(process.argv);
 
 // const dht = require("node-dht-sensor").promises;
 // let tempt = dht.read(22, 18, function (err, temperature, humidity) {
@@ -33,6 +38,9 @@ const sensor_ds18b20 = require('ds18b20-raspi');
 //     });
 // }
 
+
+
+
 function readTempt() {
 
     // this ok, but want to readc multiple, so commenting out
@@ -40,7 +48,8 @@ function readTempt() {
     // const deviceId = '28-020a924654d7';
     //const deviceId = '28-020e91770579'; // house test
     //const deviceId = '28-000002d111e1'; // Engine Room Ambient 
-    const deviceId = '28-0000069813e8'; // Hot Water Heater
+    // const deviceId = '28-0000069813e8'; // Hot Water Heater
+    const deviceId = program.opts().sensor;
     let sensorResult = sensor_ds18b20.readC(deviceId);
 
     const temperature = sensorResult;
