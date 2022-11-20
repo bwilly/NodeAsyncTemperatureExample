@@ -16,6 +16,16 @@ const url = require('url')
 const client = require('prom-client')
 const sensor_ds18b20 = require('ds18b20-raspi');
 
+const program = require('commander');
+
+program
+  .option('-i, --sensor <sensorId>', '1-wire sensor id')
+  .option('-l, --location <location>', 'listen port')
+  .option('-p, --port <port>', 'listen port')
+  .parse(process.argv);
+
+let options = program.opts();
+
 // Create a Registry which registers the metrics
 const register = new client.Registry()
 
@@ -38,12 +48,14 @@ const temptMetric = new client.Gauge({
     // This can be synchronous or it can return a promise/be an async function.
     // this.set(7);
 
+    const deviceId = options.sensor;
+    const location = options.location;
     try {
-      let sensorResult = sensor_ds18b20.readSimpleC();
+      let sensorResult = sensor_ds18b20.readC(deviceId);
 
 
       console.log("Tempt: " + sensorResult);
-      this.set({ location: 'Pi4-2' }, sensorResult);
+      this.set({ location: location }, sensorResult);
 
 
 
@@ -75,4 +87,4 @@ const server = http.createServer(async (req, res) => {
 })
 
 // Start the HTTP server which exposes the metrics on http://localhost:8080/metrics
-server.listen(8080)
+server.listen(options.port)
