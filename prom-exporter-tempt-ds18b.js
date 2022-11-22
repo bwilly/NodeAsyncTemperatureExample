@@ -20,8 +20,8 @@ const program = require('commander');
 
 program
   .option('-i, --sensor <sensorId>', '1-wire sensor id')
-  .option('-l, --location <location>', 'listen port')
-  .option('-p, --port <port>', 'listen port')
+  .option('-l, --location <location>', 'location to report where the sensor is located')
+  .option('-p, --port <port>', 'listen port for http server')
   .parse(process.argv);
 
 let options = program.opts();
@@ -51,21 +51,13 @@ const temptMetric = new client.Gauge({
     const deviceId = options.sensor;
     const location = options.location;
     try {
-      let sensorResult = sensor_ds18b20.readC(deviceId);
-
+      let sensorResult = sensor_ds18b20.readC(deviceId, 2);
 
       console.log("Tempt: " + sensorResult);
       this.set({ location: location }, sensorResult);
-
-
-
-
     } catch (e) {
       console.log("Catch error: " + e);
     }
-
-
-
   },
 })
 register.registerMetric(temptMetric);
