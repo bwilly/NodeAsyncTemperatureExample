@@ -19,9 +19,9 @@ const sensor_ds18b20 = require('ds18b20-raspi');
 const program = require('commander');
 
 program
-  .option('-i, --sensor <sensorId>', '1-wire sensor id')
-  .option('-l, --location <location>', 'location to report where the sensor is located')
-  .option('-p, --port <port>', 'listen port for http server')
+  .requiredOption('-i, --sensor <uuid>', '1-wire sensor id')
+  .requiredOption('-l, --location <location>', 'location to report where the sensor is located')
+  .requiredOption('-h, --port <httpport>', 'listen port for http server')
   .parse(process.argv);
 
 let options = program.opts();

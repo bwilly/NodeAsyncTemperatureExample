@@ -16,7 +16,7 @@ const sensor_ds18b20 = require('ds18b20-raspi');
 const program = require('commander');
 
 program
-    .requiredOption('-i, --sensor <port>', '1-wire sensor id')
+    .requiredOption('-i, --sensor <uuid>', '1-wire sensor id')
     .option('-a, --async', 'Async sensor call.')
     .option('-s, --sync', 'Synchronous sensor call.')
     .option('-c, --callback', 'Callback sensor call.')

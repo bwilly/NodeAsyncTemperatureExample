@@ -15,6 +15,18 @@ const http = require('http')
 const url = require('url')
 const client = require('prom-client')
 const dht = require("node-dht-sensor").promises;
+const program = require('commander');
+
+program
+  .requiredOption('-l, --location <location>', 'location to report where the sensor is located')
+  .requiredOption('-p, --pin <gpio>', 'DHT22 Pin GPIO Number')
+  .requiredOption('-h, --port <httpport>', 'listen port for http server')
+  .parse(process.argv);
+
+let options = program.opts();
+let pin = options.pin;
+console.log("DHT22 on Pin " + pin);
+
 
 // Create a Registry which registers the metrics
 const register = new client.Registry()
@@ -55,9 +67,9 @@ const temptMetric = new client.Gauge({
       //   } else {
       //     console.log(err);
       //   }
-      let tempt = (await dht.read(22, 18)).temperature;
+      let tempt = (await dht.read(22, options.pin)).temperature;
       console.log("Tempt: " + tempt);
-      this.set({ location: 'Pi4-2' }, tempt);
+      this.set({ location: options.location }, tempt);
 
 
 
@@ -93,4 +105,4 @@ const server = http.createServer(async (req, res) => {
 })
 
 // Start the HTTP server which exposes the metrics on http://localhost:8080/metrics
-server.listen(8080)
+server.listen(options.port)

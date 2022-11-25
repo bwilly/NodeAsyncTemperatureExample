@@ -22,7 +22,7 @@ const dht = require("node-dht-sensor");
 const program = require('commander');
 
 program
-    .option('-p, --pin <gpio>', 'DHT22 Pin GPIO Number')
+    .requiredOption('-p, --pin <gpio>', 'DHT22 Pin GPIO Number')
     .option('-a, --async', 'Async sensor call.')
     .option('-s, --sync', 'Synchronous sensor call.')
     .option('-c, --callback', 'Callback sensor call.')
