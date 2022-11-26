@@ -57,6 +57,7 @@ const temptMetric = new client.Gauge({
       this.set({ location: location }, sensorResult);
     } catch (e) {
       console.log("Catch error: " + e);
+      this.set({ location: location }, null); // otherwise, metric will quietly report the last good result
     }
   },
 })
