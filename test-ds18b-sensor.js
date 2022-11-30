@@ -40,6 +40,9 @@ function readTemptAsCallback() {
 }
 
 function readTempt() {
+    // callback method, ulike this one, shows better native error when encountered
+    // Error: Could not find 1-Wire temperature sensor for deviceId = 28-000002d105bxxx
+    // better: error: Error: ENOENT: no such file or directory, open '/sys/bus/w1/devices/w1_bus_master1/28-000002d105bxxx/w1_slave'
     let sensorResult = sensor_ds18b20.readC(deviceId, 2);
     const temperature = sensorResult;
     console.log(`temp (synchronous): ${temperature}°C`);

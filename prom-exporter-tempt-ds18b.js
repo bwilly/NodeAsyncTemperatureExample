@@ -4,11 +4,20 @@
   - targets:
     - localhost:8080
  * 
-pi@pi4-2:~/nodejs/tempt-sensor $ node server.js 
-Tempt: 19.5 
 
- * Above is the local metric console log.
- */
+Nov 29, 2022
+
+Start server (normally run as service): 
+node prom-exporter-tempt-ds18b.js -i28-000002d105bb -h8081 -llab
+
+Run CURL test. Normally, it will be called from a prometheus server: 
+DEV-BWLLY-MBP:~ bwilly$ curl http://pi4-2.local:8081/metrics
+
+# HELP ambient_tempt_celcius Temperature Sensor
+# TYPE ambient_tempt_celcius gauge
+ambient_tempt_celcius{location="lab",app="sensor-temperature-app"} 18.94
+
+*/
 
 
 const http = require('http')
@@ -57,12 +66,11 @@ const temptMetric = new client.Gauge({
       this.set({ location: location }, sensorResult);
     } catch (e) {
       console.log("Catch error: " + e);
-      this.set({ location: location }, null); // otherwise, metric will quietly report the last good result
+      sensorResult = null; // otherwise, metric will quietly report the last good result (it seems or was)
     }
   },
 })
 register.registerMetric(temptMetric);
-
 
 // Define the HTTP server
 const server = http.createServer(async (req, res) => {
@@ -74,7 +82,6 @@ const server = http.createServer(async (req, res) => {
     // Return all metrics the Prometheus exposition format
     res.setHeader('Content-Type', register.contentType)
     res.end(await register.metrics())
-    // res.end("hello bwilly")
   }
 
 })
