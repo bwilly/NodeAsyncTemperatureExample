@@ -1,0 +1,12 @@
+[Unit]
+Description=My Test Service
+After=network.target
+
+[Service]
+User=pi
+Type=simple
+ExecStart=/usr/bin/node /home/pi/nodejs/NodeAsyncTemperatureExample/prom-exporter-tempt-dht22.js -p18 -h8080 -l "NorthAttic"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=My Test Service
+After=network.target
+
+[Service]
+User=pi
+Type=simple
+ExecStart=/usr/bin/node /home/pi/nodejs/tempt-sensor/prom-exporter-tempt-ds18b.js -h 8080 -i "28-000002d105bb" -l "Lab"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
