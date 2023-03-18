@@ -30,7 +30,7 @@ program
   .requiredOption('-p, --pin <gpio>', 'DHT22 Pin GPIO Number')
   .requiredOption('-h, --port <httpport>', 'listen port for http server')
   .requiredOption('-t, --type <mDnsService>', 'mDNS Service Type Name')
-  .requiredOption('-n, --name <mDnsInstance>', 'mDNS Service Instance Name')
+  .requiredOption('-n, --name <mDnsInstancePrefix>', 'mDNS Service Instance Name Prefix')
   .parse(process.argv);
 
 let options = program.opts();
@@ -118,4 +118,6 @@ const server = http.createServer(async (req, res) => {
 server.listen(options.port)
 
 // Register Service w/ mDNS
-const mDns = mDnsService(options.name, options.type, options.port);
+const instanceName = `${options.name}-${options.location}`;
+const mDns = mDnsService(instanceName, options.type, options.port);
+console.log(`mDNS advertised ${instanceName}, ${options.type}, ${options.port}`);

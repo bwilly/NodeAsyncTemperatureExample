@@ -101,5 +101,6 @@ server.listen(options.port)
 console.log("HTTP listening on port " + options.port);
 
 // Register Service w/ mDNS
-const mDns = mDnsService(options.name, options.type, options.port);
-console.log(`mDNS advertised ${options.port} ${options.type}, ${options.port}`);
+const instanceName = `${options.name}-${options.location}`;
+const mDns = mDnsService(instanceName, options.type, options.port);
+console.log(`mDNS advertised ${instanceName}, ${options.type}, ${options.port}`);
