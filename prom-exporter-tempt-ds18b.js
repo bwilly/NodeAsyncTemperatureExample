@@ -33,7 +33,7 @@ const sensor_ds18b20 = require('ds18b20-raspi');
 
 const program = require('commander');
 
-const mDnsService = require('mdns-module');
+const mDnsService = require('mdns-module'); // may require this install on rpi: apt-get install libavahi-compat-libdnssd-dev
 
 program
   .requiredOption('-i, --sensor <uuid>', '1-wire sensor id')

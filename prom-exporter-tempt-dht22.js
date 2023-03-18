@@ -23,7 +23,7 @@ const client = require('prom-client')
 const dht = require("node-dht-sensor").promises;
 const program = require('commander');
 
-const mDnsService = require('mdns-module');
+const mDnsService = require('mdns-module'); // may require this install on rpi: apt-get install libavahi-compat-libdnssd-dev
 
 program
   .requiredOption('-l, --location <location>', 'location to report where the sensor is located')
