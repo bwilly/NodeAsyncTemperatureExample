@@ -17,6 +17,12 @@ DEV-BWLLY-MBP:~ bwilly$ curl http://pi4-2.local:8081/metrics
 # TYPE ambient_tempt_celcius gauge
 ambient_tempt_celcius{location="lab",app="sensor-temperature-app"} 18.94
 
+* CLI Usage with mDNS Module
+* node prom-exporter-tempt-ds18b.js -h8082 -i28-000002d105bb -l "TestA" -n "rpi-climate-sensor-test" -t "climate-http"
+*
+*
+
+
 */
 
 
@@ -27,10 +33,14 @@ const sensor_ds18b20 = require('ds18b20-raspi');
 
 const program = require('commander');
 
+const mDnsService = require('mdns-module');
+
 program
   .requiredOption('-i, --sensor <uuid>', '1-wire sensor id')
   .requiredOption('-l, --location <location>', 'location to report where the sensor is located')
   .requiredOption('-h, --port <httpport>', 'listen port for http server')
+  .requiredOption('-t, --type <mDnsService>', 'mDNS Service Type Name')
+  .requiredOption('-n, --name <mDnsInstance>', 'mDNS Service Instance Name')
   .parse(process.argv);
 
 let options = program.opts();
@@ -40,7 +50,7 @@ const register = new client.Registry()
 
 // Add a default label which is added to all metrics
 register.setDefaultLabels({
-  app: 'sensor-temperature-app'
+  app: 'prom-exporter-tempt-ds18b'
 })
 
 
@@ -88,3 +98,8 @@ const server = http.createServer(async (req, res) => {
 
 // Start the HTTP server which exposes the metrics on http://localhost:8080/metrics
 server.listen(options.port)
+console.log("HTTP listening on port " + options.port);
+
+// Register Service w/ mDNS
+const mDns = mDnsService(options.name, options.type, options.port);
+console.log(`mDNS advertised ${options.port} ${options.type}, ${options.port}`);

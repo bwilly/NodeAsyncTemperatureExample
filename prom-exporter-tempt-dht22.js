@@ -4,10 +4,16 @@
   - targets:
     - localhost:8080
  * 
-pi@pi4-2:~/nodejs/tempt-sensor $ node server.js 
-Tempt: 19.5 
+ * pi@pi4-2:~/nodejs/tempt-sensor $ node server.js 
+ * Tempt: 19.5 
 
  * Above is the local metric console log.
+
+* CLI Usage with mDNS Module
+* node prom-exporter-tempt-dht22.js -h8081 -p18 -l "PromLocationTest" -n "rpi-climate-sensor-test" -t "climate-http"
+*
+*
+
  */
 
 
@@ -17,10 +23,14 @@ const client = require('prom-client')
 const dht = require("node-dht-sensor").promises;
 const program = require('commander');
 
+const mDnsService = require('mdns-module');
+
 program
   .requiredOption('-l, --location <location>', 'location to report where the sensor is located')
   .requiredOption('-p, --pin <gpio>', 'DHT22 Pin GPIO Number')
   .requiredOption('-h, --port <httpport>', 'listen port for http server')
+  .requiredOption('-t, --type <mDnsService>', 'mDNS Service Type Name')
+  .requiredOption('-n, --name <mDnsInstance>', 'mDNS Service Instance Name')
   .parse(process.argv);
 
 let options = program.opts();
@@ -33,7 +43,7 @@ const register = new client.Registry()
 
 // Add a default label which is added to all metrics
 register.setDefaultLabels({
-  app: 'example-nodejs-app'
+  app: 'prom-exporter-tempt-dht22'
 })
 
 // Enable the collection of default metrics
@@ -106,3 +116,6 @@ const server = http.createServer(async (req, res) => {
 
 // Start the HTTP server which exposes the metrics on http://localhost:8080/metrics
 server.listen(options.port)
+
+// Register Service w/ mDNS
+const mDns = mDnsService(options.name, options.type, options.port);
